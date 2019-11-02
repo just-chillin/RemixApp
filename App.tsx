@@ -1,16 +1,34 @@
 import React from 'react';
-import { StyleSheet, Text, View, TextInput, Button } from 'react-native';
+import { StyleSheet, Text, View, TextInput, Button, AsyncStorage } from 'react-native';
+import { createAppContainer } from 'react-navigation';
+import { createStackNavigator } from 'react-navigation-stack';
+import RESTService from './RESTService'
+import LoginScreen from './LoginScreen'
 
-export default function App() {
+const restURL = 'localhost'
+
+
+
+function RegisterScreen() {
   return (
     <View style={styles.container}>
-      <h1>Welcome to Remix!</h1>
-      <TextInput placeholder='email'></TextInput>
-      <TextInput placeholder='password'></TextInput>
-      <Button title='Register'/>
+      <TextInput placeholder='Email'></TextInput>
+      <TextInput placeholder='Password'></TextInput>
+      <TextInput placeholder='Confirm Password'></TextInput>
+      <TextInput placeholder='Handle'></TextInput>
+      <Button onPress={()=>{}} title='Register'></Button>
     </View>
-  );
+  )
 }
+
+export default createAppContainer(createStackNavigator({
+  Home: {
+    screen: LoginScreen,
+  },
+  Register: {
+    screen: RegisterScreen,
+  },
+}));
 
 const styles = StyleSheet.create({
   container: {
