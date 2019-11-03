@@ -1,17 +1,50 @@
-import React from 'react';
+import { AsyncStorage } from "react-native";
 
-export default {
-    //TODO: the actual hostname
-    api: 'localhost',
+const RESTService = {
+  api: "http://127.0.0.1:5000",
 
-    fetchAPI: (route: String, body: Object) => fetch(`${this.api}/${route}`, { 
+  post: (route: string, body: object, auth?: string) =>
+    new Promise<Response>(async () => {
+      const response = fetch(RESTService.api + route, {
+        method: "POST",
+        mode: "no-cors",
         headers: {
-            Accept: 'application/json',
-            'Content-Type': 'application/json',
+          "Content-Type": "application/json",
+          authorization: `Bearer ${auth}`,
         },
-        body: JSON.stringify(body)
+        body: JSON.stringify(body),
+      });
+      console.log(JSON.stringify(body));
+      response.then(console.log).catch(console.error);
+      return await response;
     }),
 
-    register: (email, password, handle) => this.fetchAPI('/account/register', {email: email, password: password, handle: handle}),
-    login: (username, password) => this.fetchAPI('/account/login', {username: username, password: password}),
-}
+  get: (route: string, auth?: string) =>
+    new Promise<Response>(async () => {
+      const response = fetch(RESTService.api + route, {
+        method: "GET",
+        mode: "no-cors",
+        headers: { authorization: `Bearer ${auth}` },
+      });
+      response.then(console.log).catch(console.error);
+      return await response;
+    }),
+
+  register: (email: string, password: string, handle: string) =>
+    RESTService.post("/account/register", {
+      email: email,
+      handle: handle,
+      auth: btoa(`${email}:${password}`)
+    })
+      .then(() => {
+        AsyncStorage.setItem("auth", btoa(`${email}:${password}`), console.error);
+        console.debug('hit it!');
+      })
+      .catch(console.error),
+
+  validateLogin: (email: string, password: string) => RESTService.get("/account/validate", btoa(`${email}:${password}`)),
+
+  test: () => RESTService.get("/test"),
+};
+
+export { RESTService as default };
