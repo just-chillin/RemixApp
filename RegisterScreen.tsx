@@ -16,7 +16,7 @@ interface State {
 }
 
 export default class RegisterScreen extends Component<Props, State> {
-  constructor(props) {
+  constructor(props: Readonly<Props>) {
     super(props);
     this.state = {
       email: "",
@@ -31,14 +31,19 @@ export default class RegisterScreen extends Component<Props, State> {
       <Text style={styles.error}>{this.state.error}</Text>
       <TextInput
         placeholder='Email'
+        autoCompleteType="email"
+        autoCapitalize="none"
         onChangeText={v => this.setState({ email: v })}
       ></TextInput>
       <TextInput
         placeholder='Password'
+        autoCapitalize="none"
+        secureTextEntry={true}
         onChangeText={v => this.setState({ password: v })}
       ></TextInput>
       <TextInput
         placeholder='Handle'
+        autoCapitalize="none"
         onChangeText={v => this.setState({ handle: v })}
       ></TextInput>
       <Button onPress={this.onRegisterClicked} title='Register'></Button>
@@ -46,9 +51,9 @@ export default class RegisterScreen extends Component<Props, State> {
     </View>
   );
 
-  static validHandle = handle => handle !== "";
-  static validPassword = password => password !== "";
-  static validEmail = email => email !== "" && EMAIL_REGEX.test(email);
+  static validHandle = (handle: string) => handle !== "";
+  static validPassword = (password: string) => password !== "";
+  static validEmail = (email: string) => email !== "" && EMAIL_REGEX.test(email);
 
   onRegisterClicked = () => {
     const email = this.state.email;
@@ -64,14 +69,11 @@ export default class RegisterScreen extends Component<Props, State> {
       this.setState({ error: "Invalid handle" });
       return;
     }
-    RESTService.register(
+    Promise.resolve(RESTService.register(
       this.state.email,
       this.state.password,
       this.state.handle
-    ).then(() => {
-      console.debug("HIT IT");
-      this.cancel();
-    });
+    ).then(() => this.cancel()));
   };
 
   cancel = () => this.props.navigation.navigate("Login");
@@ -81,10 +83,18 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center"
+    alignItems: "stretch",
+    justifyContent: "center",
+    flexDirection: 'column',
   },
   error: {
     color: "red"
-  }
+  },
+  button: {
+    backgroundColor: 'blue',
+    height:70,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
 });
