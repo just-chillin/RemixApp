@@ -1,36 +1,53 @@
 import React, { Component } from "react";
-import { View, Text } from "react-native";
-import {LivePlayer} from "react-native-live-stream";
+import { View, Dimensions } from "react-native";
+import { Video } from "expo-av";
 
-export class VideoCard extends Component {
-    constructor(props: Readonly<{ key: Number, index: Number }>) {
-        super(props);
-    }
+interface Props {
+  key: number;
+  index: number;
+  src: string;
+  getRef: Function;
+}
 
-    testVideo = <LivePlayer source={{ uri: "rtmp://live.hkstv.hk.lxdns.com/live/hks" }}
-        ref={(ref) => {
-            this.player = ref;
-        }}
-        paused={false}
-        muted={false}
-        bufferTime={300}
-        maxBufferTime={1000}
-        resizeMode={"contain"}
-        onLoading={() => { }}
-        onLoad={() => { }}
-        onEnd={() => { }}
-    />
+interface State {
+  paused: boolean;
+}
 
-    createElement() {
+const dimensions = Dimensions.get("window");
 
-    }
+export default class VideoCard extends Component<Props, State> {
+  videoRef: Video;
 
-    render() {
-        return (
-            <View>
-                {this.testVideo}
-            </View>
-        )
-    }
+  constructor(props: Props) {
+    super(props);
+    this.state = {
+      paused: true
+    };
+    this.props.getRef(this);
+  }
 
+  onMagicTap = () => {
+    console.log("tapped!");
+  };
+
+  notifyLeaveView = () => this.videoRef.stopAsync();
+  notifyEnterView = () => this.videoRef.playAsync();
+
+  render() {
+    return (
+      <View onMagicTap={this.onMagicTap}>
+        <Video
+          ref={r => (this.videoRef = r)}
+          source={{ uri: this.props.src }}
+          rate={1.0}
+          volume={1.0}
+          isMuted={false}
+          resizeMode="cover"
+          shouldPlay={false}
+          isLooping
+          style={{ width: dimensions.width, height: dimensions.height }}
+        />
+      </View>
+    );
+  }
 }

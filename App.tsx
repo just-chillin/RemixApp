@@ -2,17 +2,26 @@ import { createAppContainer } from 'react-navigation';
 import { createStackNavigator } from 'react-navigation-stack';
 import LoginScreen from './LoginScreen';
 import RegisterScreen from './RegisterScreen';
-import Feed from './Feed'
+import Feed from './Feed';
 
-export default createAppContainer(
-  createStackNavigator({
-    Login: {
-      screen: LoginScreen,
+const routeConfigs = {
+  Login: {
+    screen: LoginScreen,
+  },
+  Register: {
+    screen: RegisterScreen,
+  },
+  Feed: {
+    screen: Feed,
+    navigationOptions: {
+      headerShown: false,
+      gesturesEnabled: false,
     },
-    Register: {
-      screen: RegisterScreen,
-    },
-    Feed: {
-      screen: Feed
-    },
-  }));
+  },
+};
+
+const stackNavigatorConfig = {
+  
+};
+
+export default createAppContainer(createStackNavigator(routeConfigs, stackNavigatorConfig));
