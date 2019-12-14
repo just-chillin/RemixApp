@@ -1,27 +1,73 @@
-import { createAppContainer } from 'react-navigation';
-import { createStackNavigator } from 'react-navigation-stack';
-import LoginScreen from './LoginScreen';
-import RegisterScreen from './RegisterScreen';
-import Feed from './Feed';
+import React, { Component } from "react";
+import {
+  AsyncStorage,
+  ActivityIndicator,
+  StatusBar,
+  StyleSheet,
+  View,
+  TextInput,
+  Button,
+  Text
+} from "react-native";
+import { createAppContainer, createSwitchNavigator } from "react-navigation";
+import { createStackNavigator } from "react-navigation-stack";
+import LoginScreen from "./LoginScreen";
+import RegisterScreen from "./RegisterScreen";
+import Feed from "./Feed";
 
-const routeConfigs = {
+const skipLogin = true;
+
+interface Props { navigation: { navigate: Function }; }
+
+class AuthLoadingScreen extends Component<Props> {
+  styles = StyleSheet.create({
+    container: {
+      flex: 1,
+      justifyContent: "center"
+    },
+    horizontal: {
+      flexDirection: "row",
+      justifyContent: "space-around",
+      padding: 0
+    }
+  });
+
+  constructor(props: Props) {
+    super(props);
+    AsyncStorage.getItem("auth").then(auth =>
+      this.props.navigation.navigate(auth || skipLogin ? "App" : "Auth")
+    );
+  }
+
+  // Render any loading content that you like here
+  render() {
+    return (
+      <View style={this.styles.container}>
+        <ActivityIndicator />
+        <StatusBar barStyle="default" />
+      </View>
+    );
+  }
+}
+
+const authStack = createStackNavigator({
   Login: {
-    screen: LoginScreen,
+    screen: LoginScreen
   },
   Register: {
-    screen: RegisterScreen,
-  },
-  Feed: {
-    screen: Feed,
-    navigationOptions: {
-      headerShown: false,
-      gesturesEnabled: false,
+    screen: RegisterScreen
+  }
+});
+
+export default createAppContainer(
+  createSwitchNavigator(
+    {
+      AuthLoading: AuthLoadingScreen,
+      App: Feed,
+      Auth: authStack
     },
-  },
-};
-
-const stackNavigatorConfig = {
-  
-};
-
-export default createAppContainer(createStackNavigator(routeConfigs, stackNavigatorConfig));
+    {
+      initialRouteName: "AuthLoading"
+    }
+  )
+);

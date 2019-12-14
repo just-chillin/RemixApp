@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { StyleSheet } from "react-native";
+import { StyleSheet, View, Text } from "react-native";
 import VideoCard from "./VideoCard";
 
 import Swiper from "react-native-swiper";
@@ -37,7 +37,7 @@ export default class Feed extends Component {
   numPrecachedVideos = 10;
   videoSources = [
     "https://remixvideo.s3.amazonaws.com/Snapchat-523608777.mp4",
-    "http://d23dyxeqlo5psv.cloudfront.net/big_buck_bunny.mp4"
+    "http://d23dyxeqlo5psv.cloudfront.net/big_buck_bunny.mp4",
   ];
   videoCards = [];
   videoCardsRefByKey = [];
@@ -60,16 +60,12 @@ export default class Feed extends Component {
   getRef = (card: JSX.Element) => this.videoCardsRefByKey[card.key];
 
   onSwiperIndexChanged = index => {
-    const oldVideoRef: VideoCard = this.videoCardsRefByKey[this.currentIndex];
-    const newVideoRef: VideoCard = this.videoCardsRefByKey[index];
-
-    oldVideoRef.notifyLeaveView();
-    newVideoRef.notifyEnterView();
-
+    this.videoCardsRefByKey[this.currentIndex].notifyLeaveView();
+    this.videoCardsRefByKey[index].notifyEnterView();
+    this.currentIndex = index;
   };
 
   componentDidMount() {
-    console.log(this.videoCardsRefByKey);
     if (this.currentIndex === 0) this.videoCardsRefByKey[0].notifyEnterView();
   }
 
@@ -79,6 +75,9 @@ export default class Feed extends Component {
       showsButtons={false}
       showsPagination={false}
       onIndexChanged={this.onSwiperIndexChanged}
+      loop={false}
+      bounces
+      removeClippedSubviews
     >
       {this.videoCards}
     </Swiper>

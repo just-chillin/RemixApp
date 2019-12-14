@@ -17,7 +17,7 @@ const RESTService = {
       body: JSON.stringify(body),
     });
     console.log('Response:', JSON.stringify(body));
-    response.then(console.log).catch(()=>console.log(`Request for route ${route} failed`));
+    response.then(console.log).catch(() => console.log(`Request for route ${route} failed`));
     return await response;
   },
 
@@ -27,7 +27,7 @@ const RESTService = {
       mode: "no-cors",
       headers: new Headers({ "Authorization": `Basic ${auth}` }),
     });
-    response.then(console.log).catch(()=>console.log(`Request for route ${route} failed`));
+    response.then(console.log).catch(() => console.log(`Request for route ${route} failed`));
     return await response;
   },
 

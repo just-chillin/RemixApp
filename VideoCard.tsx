@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { View, Dimensions } from "react-native";
 import { Video } from "expo-av";
+import { throwIfAudioIsDisabled } from "expo-av/build/Audio/AudioAvailability";
 
 interface Props {
   key: number;
@@ -13,7 +14,7 @@ interface State {
   paused: boolean;
 }
 
-const dimensions = Dimensions.get("window");
+const dimensions = Dimensions.get("screen");
 
 export default class VideoCard extends Component<Props, State> {
   videoRef: Video;
@@ -26,26 +27,30 @@ export default class VideoCard extends Component<Props, State> {
     this.props.getRef(this);
   }
 
-  onMagicTap = () => {
-    console.log("tapped!");
-  };
+  onTap = () =>
+    this.setState({ paused: !this.state.paused }, () => {
+      console.log(`tapped! now paused = ${this.state.paused}`);
+      this.state.paused
+        ? this.videoRef.playAsync()
+        : this.videoRef.pauseAsync();
+    });
 
-  notifyLeaveView = () => this.videoRef.stopAsync();
-  notifyEnterView = () => this.videoRef.playAsync();
+  notifyLeaveView = () =>
+    this.videoRef.stopAsync().then(() => this.setState({ paused: true }));
+  notifyEnterView = () =>
+    this.videoRef.playAsync().then(() => this.setState({ paused: false }));
 
   render() {
     return (
-      <View onMagicTap={this.onMagicTap}>
+      <View>
         <Video
           ref={r => (this.videoRef = r)}
           source={{ uri: this.props.src }}
-          rate={1.0}
-          volume={1.0}
           isMuted={false}
           resizeMode="cover"
-          shouldPlay={false}
           isLooping
-          style={{ width: dimensions.width, height: dimensions.height }}
+          useNativeControls
+          style={{ height: dimensions.height, width: dimensions.width }}
         />
       </View>
     );
