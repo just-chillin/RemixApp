@@ -72,8 +72,8 @@ export default class RegisterScreen extends Component<Props, State> {
     Promise.resolve(RESTService.register(
       this.state.email,
       this.state.password,
-      this.state.handle
-    ).then(() => this.cancel()));
+      this.state.handle,
+    ).then(this.cancel));
   };
 
   cancel = () => this.props.navigation.navigate("Login");

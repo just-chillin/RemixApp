@@ -1,10 +1,9 @@
-import React, { Component } from "react";
-import { StyleSheet, View, Text } from "react-native";
+import React, {Component} from "react";
+import {StyleSheet} from 'react-native';
 import VideoCard from "./VideoCard";
-
 import Swiper from "react-native-swiper";
-import { Video } from "expo-av";
 
+// CSS-Like styles
 const styles = StyleSheet.create({
   wrapper: {},
   slide1: {
@@ -32,6 +31,9 @@ const styles = StyleSheet.create({
   }
 });
 
+/**
+ * Holds the list of videos and handles rendering them.
+ */
 export default class Feed extends Component {
   currentIndex = 0;
   numPrecachedVideos = 10;
