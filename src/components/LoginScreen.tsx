@@ -8,10 +8,8 @@ import {
   AsyncStorage,
   ActivityIndicator
 } from "react-native";
-import RESTService from "./RESTService";
+import RESTService from "../RESTService";
 import base64 from "react-native-base64";
-
-const btoa = base64.encode;
 
 interface Props {
   navigation: any;
@@ -22,7 +20,27 @@ interface State {
   password: string;
 }
 
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "#fff",
+    alignItems: "stretch",
+    justifyContent: "center",
+    flexDirection: "column"
+  },
+  loading: {
+    display: "none",
+    position: "absolute",
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
+    alignItems: "center"
+  }
+});
+
 export default class LoginScreen extends Component<Props, State> {
+  // Boolean that determines if this component should auto login the user. Should never be false in production.
   shouldAutoLogin = true;
 
   constructor(props: Props) {
@@ -31,16 +49,19 @@ export default class LoginScreen extends Component<Props, State> {
       email: "",
       password: ""
     };
-    AsyncStorage.getItem("auth").then(res => {
-      if (res !== null && this.shouldAutoLogin) {
-        console.log(
-          `BEARER TOKEN ${res} FOUND! The component should auto login here.`
-        );
-        this.goToApp();
-      } else {
-        console.log("Did not find bearer token.");
-      }
-    });
+
+    if (this.shouldAutoLogin) {
+      AsyncStorage.getItem("auth").then(res => {
+        if (res !== null) {
+          console.log(
+            `BEARER TOKEN ${res} FOUND! The component should auto login here.`
+          );
+          this.goToApp();
+        } else {
+          console.log("Did not find bearer token.");
+        }
+      });
+    }
   }
 
   render = () => (
@@ -69,6 +90,9 @@ export default class LoginScreen extends Component<Props, State> {
     </View>
   );
 
+  /**
+   * Validates the user's credentials against the api, and if they are valid, saves the auth token to AsyncStorage and navigates to the user's video feed.
+   */
   login = () =>
     Promise.resolve(
       RESTService.validateCredentials(this.state.email, this.state.password)
@@ -77,11 +101,11 @@ export default class LoginScreen extends Component<Props, State> {
             console.log("Login Successful!!!!");
             AsyncStorage.setItem(
               "auth",
-              btoa(`${this.state.email}:${this.state.password}`)
+              base64.encode(`${this.state.email}:${this.state.password}`)
             ).then(() => {
               console.log("saved auth code!");
-              this.goToApp();
             });
+            this.goToApp();
           } else {
             console.log("Login failed!");
           }
@@ -89,25 +113,9 @@ export default class LoginScreen extends Component<Props, State> {
         .catch(console.error)
     );
 
+  // Navigates to the register page.
   goToRegisterPage = () => this.props.navigation.navigate("Register");
+
+  // Navigates to the user's feed page.
   goToApp = () => this.props.navigation.navigate("Feed");
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "stretch",
-    justifyContent: "center",
-    flexDirection: "column"
-  },
-  loading: {
-    display: "none",
-    position: "absolute",
-    left: 0,
-    right: 0,
-    top: 0,
-    bottom: 0,
-    alignItems: "center"
-  }
-});
