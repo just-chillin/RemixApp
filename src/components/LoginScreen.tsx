@@ -67,26 +67,26 @@ export default class LoginScreen extends Component<Props, State> {
   render = () => (
     <View style={styles.container}>
       <ActivityIndicator
-        size="large"
+        size='large'
         style={styles.loading}
       ></ActivityIndicator>
       <Text>Welcome to Remix!</Text>
       <TextInput
-        placeholder="email"
-        autoCompleteType="email"
-        keyboardType="email-address"
-        autoCapitalize="none"
+        placeholder='email'
+        autoCompleteType='email'
+        keyboardType='email-address'
+        autoCapitalize='none'
         onChangeText={v => this.setState({ email: v })}
       ></TextInput>
       <TextInput
-        placeholder="password"
-        autoCompleteType="password"
+        placeholder='password'
+        autoCompleteType='password'
         secureTextEntry={true}
         onChangeText={v => this.setState({ password: v })}
       ></TextInput>
-      <Button onPress={this.login} title="Login" />
-      <Button onPress={this.goToRegisterPage} title="Register" />
-      <Button onPress={RESTService.test} title="Debug API Connection" />
+      <Button onPress={this.login} title='Login' />
+      <Button onPress={this.goToRegisterPage} title='Register' />
+      <Button onPress={RESTService.test} title='Debug API Connection' />
     </View>
   );
 

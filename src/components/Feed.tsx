@@ -1,5 +1,5 @@
-import React, {Component} from "react";
-import {StyleSheet} from 'react-native';
+import React, { Component } from "react";
+import { StyleSheet } from "react-native";
 import VideoCard from "./VideoCard";
 import Swiper from "react-native-swiper";
 
@@ -32,16 +32,16 @@ const styles = StyleSheet.create({
 });
 
 /**
- * Holds the list of videos and handles rendering them. 
+ * Holds the list of videos and handles rendering them.
  */
 export default class Feed extends Component {
   currentIndex = 0;
   numPrecachedVideos = 10;
-  
+
   // A list of links to render video cards for
   videoSources = [
     "https://remixvideo.s3.amazonaws.com/Snapchat-523608777.mp4",
-    "http://d23dyxeqlo5psv.cloudfront.net/big_buck_bunny.mp4",
+    "http://d23dyxeqlo5psv.cloudfront.net/big_buck_bunny.mp4"
   ];
 
   // Holds the list of video cards to be rendered in render()

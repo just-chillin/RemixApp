@@ -22,18 +22,18 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
     alignItems: "stretch",
     justifyContent: "center",
-    flexDirection: 'column',
+    flexDirection: "column"
   },
   error: {
     color: "red"
   },
   button: {
-    backgroundColor: 'blue',
-    height:70,
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center'
-  },
+    backgroundColor: "blue",
+    height: 70,
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center"
+  }
 });
 
 export default class RegisterScreen extends Component<Props, State> {
@@ -52,19 +52,19 @@ export default class RegisterScreen extends Component<Props, State> {
       <Text style={styles.error}>{this.state.error}</Text>
       <TextInput
         placeholder='Email'
-        autoCompleteType="email"
-        autoCapitalize="none"
+        autoCompleteType='email'
+        autoCapitalize='none'
         onChangeText={v => this.setState({ email: v })}
       ></TextInput>
       <TextInput
         placeholder='Password'
-        autoCapitalize="none"
+        autoCapitalize='none'
         secureTextEntry={true}
         onChangeText={v => this.setState({ password: v })}
       ></TextInput>
       <TextInput
         placeholder='Handle'
-        autoCapitalize="none"
+        autoCapitalize='none'
         onChangeText={v => this.setState({ handle: v })}
       ></TextInput>
       <Button onPress={this.onRegisterClicked} title='Register'></Button>
@@ -77,7 +77,8 @@ export default class RegisterScreen extends Component<Props, State> {
   // Checks if the user's password is valid.
   static validPassword = (password: string) => password !== "";
   // Checks if the email that the user has input is valid.
-  static validEmail = (email: string) => email !== "" && EMAIL_REGEX.test(email);
+  static validEmail = (email: string) =>
+    email !== "" && EMAIL_REGEX.test(email);
 
   /**
    * Tells the api to register the user based on the data they put into the form.
@@ -96,11 +97,13 @@ export default class RegisterScreen extends Component<Props, State> {
       this.setState({ error: "Invalid handle" });
       return;
     }
-    Promise.resolve(RESTService.register(
-      this.state.email,
-      this.state.password,
-      this.state.handle,
-    ).then(this.cancel));
+    Promise.resolve(
+      RESTService.register(
+        this.state.email,
+        this.state.password,
+        this.state.handle
+      ).then(this.cancel)
+    );
   };
 
   // Returns to the login screen. If the user has created a valid account it should then automatically log them in.
