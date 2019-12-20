@@ -62,7 +62,7 @@ const RESTService = {
     RESTService.get("/account/validate/", btoa(`${email}:${password}`)),
 
   // Just does a simple test against the api. Should simply return a 200 response code. If this fails you should assume the api is down.
-  test: () => RESTService.get("/test")
+  test: () => RESTService.get("/test"),
 };
 
 export default RESTService;
