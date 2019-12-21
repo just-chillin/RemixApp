@@ -4,7 +4,7 @@ import base64 from "react-native-base64";
 const btoa = base64.encode;
 
 /**
- * Helper class that
+ * Helper class that handles api calls.
  */
 const RESTService = {
   api: "http://127.0.0.1:5000",
