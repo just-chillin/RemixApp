@@ -11,9 +11,9 @@ import {
 } from "react-native";
 import { createAppContainer, createSwitchNavigator } from "react-navigation";
 import { createStackNavigator } from "react-navigation-stack";
-import LoginScreen from "./LoginScreen";
-import RegisterScreen from "./RegisterScreen";
-import Feed from "./Feed";
+import LoginScreen from "./src/components/LoginScreen";
+import RegisterScreen from "./src/components/RegisterScreen";
+import Feed from "./src/components/Feed";
 
 const skipLogin = true;
 

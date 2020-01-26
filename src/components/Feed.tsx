@@ -1,10 +1,9 @@
 import React, { Component } from "react";
-import { StyleSheet, View, Text } from "react-native";
+import { StyleSheet } from "react-native";
 import VideoCard from "./VideoCard";
-
 import Swiper from "react-native-swiper";
-import { Video } from "expo-av";
 
+// CSS-Like styles
 const styles = StyleSheet.create({
   wrapper: {},
   slide1: {
@@ -32,14 +31,23 @@ const styles = StyleSheet.create({
   }
 });
 
+/**
+ * Holds the list of videos and handles rendering them.
+ */
 export default class Feed extends Component {
   currentIndex = 0;
   numPrecachedVideos = 10;
+
+  // A list of links to render video cards for
   videoSources = [
     "https://remixvideo.s3.amazonaws.com/Snapchat-523608777.mp4",
-    "http://d23dyxeqlo5psv.cloudfront.net/big_buck_bunny.mp4",
+    "http://d23dyxeqlo5psv.cloudfront.net/big_buck_bunny.mp4"
   ];
+
+  // Holds the list of video cards to be rendered in render()
   videoCards = [];
+
+  // Holds the list of video card refs. The indicies should match up with the video card elements in videoCards.
   videoCardsRefByKey = [];
 
   constructor(props) {
@@ -57,14 +65,24 @@ export default class Feed extends Component {
     }
   }
 
+  /**
+   * Gets the card's ref object so that it's methods can be called.
+   */
   getRef = (card: JSX.Element) => this.videoCardsRefByKey[card.key];
 
+  /**
+   * Called when the user swipes to a new card.
+   * @param index The index of the card the user changed to
+   */
   onSwiperIndexChanged = index => {
     this.videoCardsRefByKey[this.currentIndex].notifyLeaveView();
     this.videoCardsRefByKey[index].notifyEnterView();
     this.currentIndex = index;
   };
 
+  /**
+   * Called when the component mounts. Notifys the card at index 0 to play the video.
+   */
   componentDidMount() {
     if (this.currentIndex === 0) this.videoCardsRefByKey[0].notifyEnterView();
   }

@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import { View, Dimensions } from "react-native";
 import { Video } from "expo-av";
-import { throwIfAudioIsDisabled } from "expo-av/build/Audio/AudioAvailability";
 
 interface Props {
   key: number;
@@ -14,6 +13,7 @@ interface State {
   paused: boolean;
 }
 
+// The device's dimensions. Used to get the width of which to display the video card.
 const dimensions = Dimensions.get("screen");
 
 export default class VideoCard extends Component<Props, State> {
@@ -27,6 +27,9 @@ export default class VideoCard extends Component<Props, State> {
     this.props.getRef(this);
   }
 
+  /**
+   * Toggles playing and pausing the video when tapped.
+   */
   onTap = () =>
     this.setState({ paused: !this.state.paused }, () => {
       console.log(`tapped! now paused = ${this.state.paused}`);
@@ -35,8 +38,15 @@ export default class VideoCard extends Component<Props, State> {
         : this.videoRef.pauseAsync();
     });
 
+  /**
+   * Stops the video when a user navigates to a different card.
+   */
   notifyLeaveView = () =>
     this.videoRef.stopAsync().then(() => this.setState({ paused: true }));
+  
+  /**
+   * Plays the video when the user navigates to the card.
+   */
   notifyEnterView = () =>
     this.videoRef.playAsync().then(() => this.setState({ paused: false }));
 
