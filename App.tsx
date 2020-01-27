@@ -14,6 +14,8 @@ import { createStackNavigator } from "react-navigation-stack";
 import LoginScreen from "./src/components/LoginScreen";
 import RegisterScreen from "./src/components/RegisterScreen";
 import Feed from "./src/components/Feed";
+import HomePage from "./src/tabs/Home";
+
 
 const skipLogin = true;
 
@@ -63,7 +65,10 @@ export default createAppContainer(
   createSwitchNavigator(
     {
       AuthLoading: AuthLoadingScreen,
-      App: Feed,
+      App: createBottomTabNavigator({
+        Feed: Feed,
+        Home: HomePage
+      }),
       Auth: authStack
     },
     {
