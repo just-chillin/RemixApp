@@ -1,9 +1,15 @@
 import React from 'react';
 import { Button, Text, View } from 'react-native';
-import { Ionicons } from '@expo/vector-icons'; // 6.2.2
-import { createBottomTabNavigator, createAppContainer, TabBarBottom } from 'react-navigation'; // 1.0.0-beta.27
+import { Ionicons } from '@expo/vector-icons';
+import { createAppContainer } from 'react-navigation';
+import { createStackNavigator, NavigationStackProp } from 'react-navigation-stack';
+import { createBottomTabNavigator } from 'react-navigation-tabs';
 
-class HomeScreen extends React.Component {
+interface Props {
+    navigation: NavigationStackProp;
+}
+
+class HomeScreen extends React.Component<Props> {
   render() {
     return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
@@ -12,12 +18,16 @@ class HomeScreen extends React.Component {
           title="Go to Settings"
           onPress={() => this.props.navigation.navigate('Settings')}
         />
+        <Button
+          title="Go to Details"
+          onPress={() => this.props.navigation.navigate('Details')}
+        />
       </View>
     );
   }
 }
 
-class SettingsScreen extends React.Component {
+class SettingsScreen extends React.Component<Props>  {
   render() {
     return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
@@ -26,18 +36,43 @@ class SettingsScreen extends React.Component {
           title="Go to Home"
           onPress={() => this.props.navigation.navigate('Home')}
         />
+        <Button
+          title="Go to Details"
+          onPress={() => this.props.navigation.navigate('Details')}
+        />
       </View>
     );
   }
 }
 
+
+class DetailsScreen extends React.Component {
+  render() {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <Text>Details!</Text>
+      </View>
+    );
+  }
+}
+
+const HomeStack = createStackNavigator({
+  Home: { screen: HomeScreen },
+  Details: { screen: DetailsScreen },
+});
+
+const SettingsStack = createStackNavigator({
+  Settings: { screen: SettingsScreen },
+  Details: { screen: DetailsScreen },
+});
+
 export default createAppContainer(createBottomTabNavigator(
   {
-    Home: { screen: HomeScreen },
-    Settings: { screen: SettingsScreen },
+    Home: { screen: HomeStack },
+    Settings: { screen: SettingsStack },
   },
   {
-    navigationOptions: ({ navigation }) => ({
+    defaultNavigationOptions: ({ navigation }) => ({
       tabBarIcon: ({ focused, tintColor }) => {
         const { routeName } = navigation.state;
         let iconName;
@@ -52,13 +87,9 @@ export default createAppContainer(createBottomTabNavigator(
         return <Ionicons name={iconName} size={25} color={tintColor} />;
       },
     }),
-    tabBarComponent: TabBarBottom,
-    tabBarPosition: 'bottom',
     tabBarOptions: {
       activeTintColor: 'tomato',
       inactiveTintColor: 'gray',
     },
-    animationEnabled: false,
-    swipeEnabled: false,
   }
 ));
