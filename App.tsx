@@ -14,8 +14,12 @@ import { createStackNavigator } from "react-navigation-stack";
 import LoginScreen from "./src/components/LoginScreen";
 import RegisterScreen from "./src/components/RegisterScreen";
 import Feed from "./src/components/Feed";
+<<<<<<< HEAD
 import { createBottomTabNavigator } from "react-navigation-tabs";
 import ProfilePage from "./src/tabs/Profile";
+=======
+import HomePage from "./src/tabs/Home";
+>>>>>>> aa4b8dca281b21ace014523946842dacea76d15b
 
 
 const skipLogin = true;
@@ -68,7 +72,11 @@ export default createAppContainer(
       AuthLoading: AuthLoadingScreen,
       App: createBottomTabNavigator({
         Feed: Feed,
+<<<<<<< HEAD
         Profile: ProfilePage
+=======
+        Home: HomePage
+>>>>>>> aa4b8dca281b21ace014523946842dacea76d15b
       }),
       Auth: authStack
     },
