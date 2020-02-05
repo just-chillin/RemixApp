@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { StyleSheet } from "react-native";
 import VideoCard from "./VideoCard";
 import Swiper from "react-native-swiper";
+import RESTService from "../RESTService";
 
 // CSS-Like styles
 const styles = StyleSheet.create({
@@ -53,16 +54,22 @@ export default class Feed extends Component {
   constructor(props) {
     super(props);
     //Asynchronously builds each of the video components and pushes them to the swiper view.
-    for (let i = 0; i < this.videoSources.length; i++) {
-      this.videoCards.push(
-        <VideoCard
-          key={i}
-          index={i}
-          src={this.videoSources[i]}
-          getRef={ref => (this.videoCardsRefByKey[i] = ref)}
-        />
-      );
-    }
+    RESTService.getNewVideos().then(async res => {
+      const json = await res.json();
+      json.forEach(video => {
+        this.videoSources.push(video.url.href);
+      });
+      for (let i = 0; i < this.videoSources.length; i++) {
+        this.videoCards.push(
+          <VideoCard
+            key={i}
+            index={i}
+            src={this.videoSources[i]}
+            getRef={ref => (this.videoCardsRefByKey[i] = ref)}
+          />
+        );
+      }
+    });
   }
 
   /**

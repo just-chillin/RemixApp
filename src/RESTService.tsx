@@ -61,6 +61,15 @@ const RESTService = {
   validateCredentials: (email: string, password: string) =>
     RESTService.get("/account/validate/", btoa(`${email}:${password}`)),
 
+  getNewVideos() {
+    const requestOptions: RequestInit = {
+      method: 'GET',
+      redirect: 'follow'
+    };
+    
+    return fetch(`http://127.0.0.1:8080/video/new?Time=${new Date().getTime()}&Page=0`, requestOptions)
+  },
+
   // Just does a simple test against the api. Should simply return a 200 response code. If this fails you should assume the api is down.
   test: () => RESTService.get("/test"),
 };
