@@ -7,7 +7,7 @@ const btoa = base64.encode;
  * Helper class that handles api calls.
  */
 const RESTService = {
-  api: "http://127.0.0.1:5000",
+  api: "Remixapi-env.vkvnemuysn.us-east-1.elasticbeanstalk.com",
 
   // Helper function that handles a POST api call.
   post: async (route: string, body: object, auth?: string) => {
