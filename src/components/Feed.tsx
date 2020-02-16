@@ -1,7 +1,8 @@
 import React, { Component } from "react";
-import { StyleSheet } from "react-native";
+import { StyleSheet, ActivityIndicator } from "react-native";
 import VideoCard from "./VideoCard";
 import Swiper from "react-native-swiper";
+import api from "../RESTService";
 
 // CSS-Like styles
 const styles = StyleSheet.create({
@@ -39,10 +40,7 @@ export default class Feed extends Component {
   numPrecachedVideos = 10;
 
   // A list of links to render video cards for
-  videoSources = [
-    "https://remixvideo.s3.amazonaws.com/Snapchat-523608777.mp4",
-    "http://d23dyxeqlo5psv.cloudfront.net/big_buck_bunny.mp4"
-  ];
+  videoSources = [];
 
   // Holds the list of video cards to be rendered in render()
   videoCards = [];
@@ -53,6 +51,12 @@ export default class Feed extends Component {
   constructor(props) {
     super(props);
     //Asynchronously builds each of the video components and pushes them to the swiper view.
+    api.getNewVideos().then(async videos => {
+      const json = await videos.json();
+      json.forEach(video => {
+        this.videoSources.push(new URL(video.key, 'https://video.remixapp.net').toString());
+      })
+    });
     for (let i = 0; i < this.videoSources.length; i++) {
       this.videoCards.push(
         <VideoCard
@@ -87,17 +91,24 @@ export default class Feed extends Component {
     if (this.currentIndex === 0) this.videoCardsRefByKey[0].notifyEnterView();
   }
 
-  render = () => (
-    <Swiper
-      style={styles.wrapper}
-      showsButtons={false}
-      showsPagination={false}
-      onIndexChanged={this.onSwiperIndexChanged}
-      loop={false}
-      bounces
-      removeClippedSubviews
-    >
-      {this.videoCards}
-    </Swiper>
+  render() {
+    if (this.videoCards.length == 0) {
+      return <ActivityIndicator size="large" style={styles.wrapper} />
+    }
+    return (
+      <Swiper
+        style={styles.wrapper}
+        showsButtons={false}
+        showsPagination={false}
+        onIndexChanged={this.onSwiperIndexChanged}
+        loop={false}
+        bounces
+        removeClippedSubviews
+      >
+        {this.videoCards}
+      </Swiper>
+    );
+  }
+
   );
 }

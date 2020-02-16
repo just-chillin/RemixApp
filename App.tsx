@@ -67,7 +67,7 @@ export default createAppContainer(
       Auth: authStack
     },
     {
-      initialRouteName: "AuthLoading"
+      initialRouteName: "App"
     }
   )
 );
