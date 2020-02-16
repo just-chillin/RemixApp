@@ -1,27 +1,19 @@
-import React from "react";
-import Feed from "./src/components/Feed";
-import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
+import React from 'react';
+import { StyleSheet, Text, View } from 'react-native';
 
-
-console.log('Application Running!');
-
-const skipLogin = true;
-
-const Stack = createStackNavigator();
-
-function App() {
+export default function App() {
   return (
-    <NavigationContainer>
-      <Stack.Navigator>
-        <Stack.Screen 
-          name="Feed"
-          component={Feed}
-        />
-      </Stack.Navigator>
-    </NavigationContainer>
-  )
-
+    <View style={styles.container}>
+      <Text>Open up App.tsx to start working on your app!</Text>
+    </View>
+  );
 }
 
-export default App;
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#fff',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+});
