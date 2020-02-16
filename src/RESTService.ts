@@ -64,13 +64,12 @@ const RESTService = {
   // Just does a simple test against the api. Should simply return a 200 response code. If this fails you should assume the api is down.
   test: () => RESTService.get("/test"),
 
-  getNewVideos() {
+  async getNewVideos() {
     const url = new URL('/video/new', RESTService.api);
     const searchParams = new URLSearchParams();
     searchParams.append('Time', Date.now().toFixed());
     searchParams.append('Page', '0');
-    url.search = searchParams.toString();
-    return fetch(url.toString());
+    return fetch(url.toString() + `?${searchParams.toString()}`);
   }
 };
 

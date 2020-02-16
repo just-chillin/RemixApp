@@ -1,6 +1,7 @@
-import React, { Component } from "react";
+import React from "react";
 import { View, Dimensions } from "react-native";
 import { Video } from "expo-av";
+
 
 interface Props {
   key: number;
@@ -16,7 +17,7 @@ interface State {
 // The device's dimensions. Used to get the width of which to display the video card.
 const dimensions = Dimensions.get("screen");
 
-export default class VideoCard extends Component<Props, State> {
+export default class VideoCard extends React.Component<Props, State> {
   videoRef: Video;
 
   constructor(props: Props) {
@@ -41,14 +42,14 @@ export default class VideoCard extends Component<Props, State> {
   /**
    * Stops the video when a user navigates to a different card.
    */
-  notifyLeaveView = () =>
-    this.videoRef.stopAsync().then(() => this.setState({ paused: true }));
+  notifyLeaveView = () => false;
+    //this.videoRef.stopAsync().then(() => this.setState({ paused: true }));
   
   /**
    * Plays the video when the user navigates to the card.
    */
-  notifyEnterView = () =>
-    this.videoRef.playAsync().then(() => this.setState({ paused: false }));
+  notifyEnterView = () => false;
+    //this.videoRef.playAsync().then(() => this.setState({ paused: false }));
 
   render() {
     return (

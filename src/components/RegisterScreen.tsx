@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React from "react";
 import { StyleSheet, View, TextInput, Button, Text } from "react-native";
 import RESTService from "../RESTService";
 
