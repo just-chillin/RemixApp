@@ -1,7 +1,8 @@
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
-import VideoFeed from './src/VideoFeed';
+import React from "react";
+import { StyleSheet, Text, View } from "react-native";
+import VideoFeed from "./src/VideoFeed";
+import { registerRootComponent } from "expo";
+import {Video} from "expo-av";
 
-console.log("App loaded!")
 
 export default VideoFeed;
