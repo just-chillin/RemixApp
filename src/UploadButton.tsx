@@ -35,10 +35,11 @@ export default class UploadButton extends React.Component<Props, {}> {
       base64: false
     });
     if (result.cancelled) return;
-    else result as { cancelled: false } & ImageInfo;
     console.debug(result);
     return RestService.uploadVideo(
+      //@ts-ignore
       result.uri,
+      //@ts-ignore
       result.uri.split("ImagePicker/")[1],
       "test"
     );
