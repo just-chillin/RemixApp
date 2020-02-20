@@ -1,132 +1,166 @@
-import React from "react";
+import React, { ReactElement, ReactInstance } from "react";
 import ViewPager, {
   ViewPagerOnPageSelectedEventData
 } from "@react-native-community/viewpager";
-import { Constants } from "expo";
 import { Video } from "expo-av";
 import { RestService, VideoEndpoint } from "./RestService";
-import { ActivityIndicator, StyleSheet, View, Dimensions, Text} from "react-native";
+import {
+  ActivityIndicator,
+  StyleSheet,
+  View,
+  NativeSyntheticEvent,
+  SafeAreaView,
+  Dimensions,
+  TouchableOpacity,
+  ScrollView,
+  RefreshControl
+} from "react-native";
+import UploadButton from "./UploadButton";
+import { Transform } from "stream";
 
 interface State {
   videos: JSX.Element[];
 }
+interface Props {}
 
-const dimensions = Dimensions.get("screen");
 
-class Feed extends React.Component<{}, State> {
+
+
+/**
+ * This component handles downloading and rendering videos retreived from the remix api.
+ */
+export default class Feed extends React.Component<Props, State> {
   refsByKey = new Map<React.Key, Video>();
-  currentKey?: React.Key = undefined;
+  previousKey?: React.Key;
+  refreshing: any;
+  setRefreshing: any;
 
-  constructor(props) {
+  constructor(props: Props) {
     super(props);
     this.state = {
       videos: []
     };
+    [this.refreshing, this.setRefreshing] = React.useState(false);
     RestService.getNewVideos()
       .then(videos => {
         this.setState(prevState => {
-          const videoElements = videos
-            .map(v => v.key)
-            .map((key, index) => this.createVideoElement(key, index));
+          const videoElements = videos.map((v, index) =>
+            this.createVideoElement(v.key, index)
+          );
+
           return {
             videos: prevState.videos.concat(videoElements)
           };
         });
+        this.forceUpdate();
       })
       .catch(console.error);
   }
 
+  refresh = React.useCallback(() => {
+    this.setRefreshing(true);
+    this.refsByKey = new Map<React.Key, Video>();
+    if (this.previousKey) {
+      const ref = this.refsByKey.get(this.previousKey);
+      if (ref) ref.unloadAsync();
+    }
+    this.previousKey = undefined;
+    this.setState({ videos: [] });
+    this.setRefreshing(false);
+  }, [this.refreshing]);
+
   createVideoElement = (key: string, index: number) => {
     const source = new URL(key, VideoEndpoint).href;
-    return (
-      <View key={key}>
-        <Video
-          source={{ uri: source }}
-          key={key}
-          ref={ref => this._handleVideoRef(ref, key, index)}
-          style={styles.video}
-          useNativeControls
-          resizeMode="cover"
-        />
-      </View>
-    );
+    console.log("creating", source);
+    return (<Video
+            source={{ uri: `https://video.remixapp.net/${response.item.key}` }}
+            onLoad={() =>
+              console.log(
+                `Rendered ${response.item.key} in ${Date.now() - loadStartTime}ms`
+              )
+            }
+            onError={this._onVideoError}
+            useNativeControls={false}
+            posterSource={SPINNER}
+            resizeMode={Video.RESIZE_MODE_COVER}
+            style={{ width: SCREEN_WIDTH, height: SCREEN_HEIGHT * 0.9 }}
+            posterStyle={{
+              position: "relative",
+              justifyContent: "center",
+              resizeMode: "center",
+              height: "100%",
+              width: "100%"
+            }}
+            ref={ref => this.refsByKey.set(response.item.key, ref)}
+          />);
   };
 
-  _handleVideoRef = (video: Video, key: React.Key, index: number) => {
+  _handleVideoRef = (video: Video | null, key: React.Key, index: number) => {
+    if (!video) {
+      return;
+    }
     this.refsByKey.set(key, video);
     if (index == 0) {
       video.playAsync();
     }
   };
 
-  // onViewPagerInit = () => {
-  //   if (this.currentKey || this.state.videos.length == 0) return;
-  //   console.debug('first video render');
-  //   const key = this.state.videos[0].key;
-  //   const videoRef = this.refsByKey.get(key);
-  //   videoRef.playAsync();
-  // }
+  onPageSelected = (
+    e: NativeSyntheticEvent<ViewPagerOnPageSelectedEventData>
+  ) => {
+    // Get the index of the video that you switched to.
+    const keyRetreivedFromEvent = this.state.videos[e.nativeEvent.position].key;
+    if (!keyRetreivedFromEvent) {
+      console.warn("Feed.onPageSelected: keyRetreivedFromEvent is null!");
+      return;
+    }
 
-  onPageSelected = (e: ViewPagerOnPageSelectedEventData) => {
-    const currentKey = this.state.videos[e.position].key;
-    this.currentKey = currentKey;
-    console.log(`page with key ${currentKey} selected`);
-    const ref = this.refsByKey.get(currentKey);
-    ref.playAsync();
+    const selectedVideoRef = this.refsByKey.get(keyRetreivedFromEvent);
+    if (!selectedVideoRef) {
+      console.warn("Feed.onPageSelected: selectedVideoRef is null!");
+      return;
+    }
+    selectedVideoRef.replayAsync();
+
+    // Retreive and stop the previous video, if it exists.
+    if (this.previousKey) {
+      const previousVideoRef = this.refsByKey.get(this.previousKey);
+      if (previousVideoRef) {
+        previousVideoRef.stopAsync();
+      }
+    }
+
+    this.previousKey = keyRetreivedFromEvent;
   };
 
   render() {
-    let thingToRender: JSX.Element | JSX.Element[];
-    if (this.state.videos.length == 0) {
-      thingToRender = <ActivityIndicator />;
-    } else {
-      thingToRender =
-        // <ViewPager
-        //   //onPageScroll={e => console.debug(JSON.stringify(e))}
-        //   onPageSelected={e => e.currentTarget}
-        //   initialPage={0}
-        // >
-        //   {this.state.videos}
-        // </ViewPager>
-        this.state.videos[0];
-    }
-    return <View style={styles.container}>{thingToRender}</View>;
+    const refreshControl = (
+      <RefreshControl
+        refreshing={this.refreshing}
+        onRefresh={this.refresh}
+        style={styles.container}
+      />
+    );
+
+    return (
+      <View>
+        <ScrollView style={styles.container} refreshControl={refreshControl}>
+          {this.state.videos}
+          <SafeAreaView>
+            <UploadButton />
+          </SafeAreaView>
+        </ScrollView>
+      </View>
+    );
   }
 }
 
-// CSS-Like styles
-const styles = StyleSheet.create({
+
+const styles = {
   container: {
     flex: 1
-  },
-  slide1: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#9DD6EB"
-  },
-  slide2: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#97CAE5"
-  },
-  slide3: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#92BBD9"
-  },
-  text: {
-    color: "#fff",
-    fontSize: 30,
-    fontWeight: "bold"
-  },
-  video: {
-      flex: 1,
-      height: dimensions.height,
-      width: dimensions.width
   }
-});
-
-export default Feed;
+}
+// <ViewPager onPageSelected={this.onPageSelected} initialPage={0}>
+// {this.state.videos}
+// </ViewPager>
