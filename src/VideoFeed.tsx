@@ -75,7 +75,7 @@ export default class VideoFeed extends React.Component<Props, State> {
   render() {
     return (
       <ViewPager onPageScroll={this.onPageScroll} style={{flex:1}} initialPage={0}>
-      this.state.data.map(this.renderVideo)}
+      {this.state.data.map(this.renderVideo)}
       </ViewPager>
     );
   }
