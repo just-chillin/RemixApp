@@ -7,7 +7,7 @@ const btoa = base64.encode;
  * Helper class that handles api calls.
  */
 const RESTService = {
-  api: "http://remixapi-env.vkvnemuysn.us-east-1.elasticbeanstalk.com/",
+  api: "https://api.remixapp.net",
 
   // Helper function that handles a POST api call.
   post: async (route: string, body: object, auth?: string) => {
@@ -61,17 +61,8 @@ const RESTService = {
   validateCredentials: (email: string, password: string) =>
     RESTService.get("/account/validate/", btoa(`${email}:${password}`)),
 
-  getNewVideos() {
-    const requestOptions: RequestInit = {
-      method: 'GET',
-      redirect: 'follow'
-    };
-    
-    return fetch(`http://127.0.0.1:8080/video/new?Time=${new Date().getTime()}&Page=0`, requestOptions)
-  },
-
   // Just does a simple test against the api. Should simply return a 200 response code. If this fails you should assume the api is down.
-  test: () => RESTService.get("/"),
+  test: () => RESTService.get("/test"),
 };
 
 export default RESTService;

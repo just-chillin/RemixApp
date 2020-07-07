@@ -11,11 +11,11 @@ import {
 } from "react-native";
 import { createAppContainer, createSwitchNavigator } from "react-navigation";
 import { createStackNavigator } from "react-navigation-stack";
-import { createBottomTabNavigator } from "react-navigation-tabs";
 import LoginScreen from "./src/components/LoginScreen";
 import RegisterScreen from "./src/components/RegisterScreen";
 import Feed from "./src/components/Feed";
-import HomePage from "./src/tabs/Home";
+import { createBottomTabNavigator } from "react-navigation-tabs";
+import ProfilePage from "./src/tabs/Profile";
 
 
 const skipLogin = true;
@@ -68,7 +68,7 @@ export default createAppContainer(
       AuthLoading: AuthLoadingScreen,
       App: createBottomTabNavigator({
         Feed: Feed,
-        Home: HomePage
+        Profile: ProfilePage
       }),
       Auth: authStack
     },
